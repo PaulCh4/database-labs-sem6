@@ -1,3 +1,4 @@
+/*######################################################################*/
 -->Task1
 drop table MyTable;
 Create table MyTable(
@@ -6,12 +7,17 @@ Create table MyTable(
     PRIMARY KEY(id)
 );
 
+
+
+
+
+/*######################################################################*/
 -->Task2
 declare
     l_random_val NUMBER;
 begin
-    l_random_val:=dbms_random.random;
 	for i in 1..99 loop
+        l_random_val:=abs(dbms_random.random);
 		insert into MyTable(val) values (l_random_val);
 	end loop;
 end;
@@ -19,5 +25,48 @@ end;
 
 SELECT * from MyTable;
 
--->Task3
 
+
+
+
+/*######################################################################*/
+-->Task3
+drop function task_3;
+
+create or replace function task_3 return VARCHAR2
+is
+    even_rows_count number;
+	odd_rows_count number;
+	all_rows_count number;
+begin
+	select count(*) into even_rows_count
+	from (
+		select val from mytable
+		where mod(val, 2) = 0
+	);
+	
+	select count(*) into all_rows_count from mytable;
+	
+	odd_rows_count:= all_rows_count - even_rows_count;
+	
+	if even_rows_count = odd_rows_count then
+		return 'EQUALS';
+	elsif even_rows_count > odd_rows_count then
+		return 'TRUE';
+	else
+		return 'FALSE';
+	end if;
+end task_3;
+
+
+set serveroutput on;
+begin
+    dbms_output.put_line(task_3());
+end;
+
+
+
+
+
+/*######################################################################*/
+-->Task4
