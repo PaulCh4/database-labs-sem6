@@ -57,16 +57,80 @@ begin
 		return 'FALSE';
 	end if;
 end task_3;
-
+/
 
 set serveroutput on;
 begin
     dbms_output.put_line(task_3());
 end;
-
+/
 
 
 
 
 /*######################################################################*/
 -->Task4
+create or replace function task_4(this_id number)return varchar2
+is
+    temp_val number;
+begin
+    select val into temp_val 
+    from MyTable 
+    where id = this_id;
+    
+    return 'insert into MyTable(id, val) values('||this_id||','||temp_val||');';
+end;
+/
+
+set serveroutput on;
+begin
+    dbms_output.put_line(task_4(5));
+end;
+/
+
+
+
+
+
+
+/*######################################################################*/
+-->Task5
+create or replace procedure insert_mytable(this_val number)
+is
+begin
+    insert into MyTable(val) values(this_val);
+end insert_mytable;
+/
+
+create or replace procedure update_mytable(this_id number, this_val number)
+is
+begin
+    update MyTable set val = this_val where id = this_id;
+end update_mytable;
+/
+
+create or replace procedure delete_mytable(this_id number)
+is
+begin
+    delete MyTable where id = this_id;
+end delete_mytable;
+/
+
+--->!!!!!!!!!!!!!!!!!!!!!
+begin
+    select * from MyTable;
+
+    execute insert_mytable(6482);
+    execute update_mytable(100,42);
+    execute delete_mytable(100);
+end;
+/
+
+
+
+
+
+
+
+/*######################################################################*/
+-->Task6
