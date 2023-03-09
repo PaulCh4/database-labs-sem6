@@ -22,6 +22,12 @@ insert into students(id, name) values(2, 'dwad');
 insert into students(id, name) values(3, 'dwaqewd'); 
 insert into students(id, name) values(4, 'dwad'); 
 
+
+
+
+
+
+
 /*######################################################################*/
 --Task2
 --1) id unique
@@ -91,6 +97,19 @@ begin
     end if;
 end;
 
+
+
+
+
+
+/*######################################################################*/
+--Task3
+create or replace trigger foreign_key
+before delete on groups
+for each row
+begin
+    delete from students where group_id = :old.id;
+end;
 
 
 
