@@ -31,7 +31,7 @@ SELECT * from MyTable;
 
 /*######################################################################*/
 -->Task3
-drop function task_3;
+--drop function task_3;
 
 create or replace function task_3 return VARCHAR2
 is
@@ -134,3 +134,37 @@ end;
 
 /*######################################################################*/
 -->Task6
+create or replace function reward(salary number, year_reward in out number) return number
+is
+    resultT number;
+    ex exception;
+    pragma exception_init(ex,-1);
+begin
+    if salary < 0 or year_reward < 0
+    then
+        raise ex;
+    end if;
+    
+    year_reward:=year_reward/100.0;
+    resultT:=(1+year_reward)*12*salary;
+    
+    return resultT;
+exception
+    when ex then
+        dbms_output.put_line('Wrong data');
+        raise;
+        return 0;
+end;
+/
+
+--->!!!!!!!!!!!!!!!!!!!!!
+set serveroutput on;
+declare
+   a number;
+   b number:=12;
+   c number:=-18;
+begin
+    a:=reward(b,c);
+    dbms_output.put_line(a);
+end;
+--->!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
