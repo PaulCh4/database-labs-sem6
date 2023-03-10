@@ -114,3 +114,68 @@ end;
 
 
 
+
+/*######################################################################*/
+--Task4
+select * from logging;
+
+create table logging(
+    id number primary key,
+    action varchar2(10),
+    logging_time timestamp,
+    st_id_prev number,
+    st_id number,
+    st_name varchar2(100),
+    st_group number
+);
+
+create sequence logging_sequence_id
+start with 1;
+
+create or replace trigger students_logging
+after insert or update or delete on students
+for each row
+declare
+    cur_action varchar2(10);
+begin
+    if inserting then
+        cur_action := 'ins';
+        insert into logging (id, action, logging_time, st_id_prev, st_id, st_name, st_group)
+            values (logging_sequence_id.nextval, cur_action, current_timestamp, null, :new.id, :new.name, :new.group_id);
+    elsif updating then
+        cur_action := 'upd';
+        insert into logging (id, action, logging_time, st_id_prev, st_id, st_name, st_group)
+            values (logging_sequence_id.nextval, cur_action, current_timestamp, :old.id, :new.id, :old.name, :old.group_id);
+    elsif deleting then
+        cur_action := 'del';
+        insert into logging (id, action, logging_time, st_id_prev, st_id, st_name, st_group)
+            values (logging_sequence_id.nextval, cur_action, current_timestamp, :old.id, null, :old.name, :old.group_id);
+  end if;
+end;
+
+
+
+
+
+
+/*######################################################################*/
+--Task5
+create or replace procedure restore_information(t timestamp) is
+begin
+    for i in (select action, st_id_prev, st_id, st_name, st_group
+              from logging where logging_time >= t order by id desc) loop
+        if i.action = 'ins' then
+            delete from students where id = i.st_id;
+        elsif i.action = 'upd' then
+            update students set id = i.st_id_prev, name = i.st_name, group_id = i.st_group where id = i.st_id;
+        elsif i.action = 'del' then
+            insert into students (id, name, group_id) values (i.st_id_prev, i.st_name, i.st_group);
+        end if;
+    end loop;
+end;
+select *
+from logging;
+begin
+    restore_information(to_timestamp('20.02.2023 14:46:20'));
+    --restore_information(to_timestamp(current_timestamp - 10));
+end;
