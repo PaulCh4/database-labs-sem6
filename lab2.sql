@@ -16,13 +16,28 @@ create table GROUPS(
 
 drop table students; 
 drop table groups;
+
+insert into groups(name, c_val) values('A', 0); 
+insert into groups(name, c_val) values('B', 0); 
+insert into students(name, group_id) values('1PPPPPP', 1);
+insert into students(name, group_id) values('2PPPPPP', 2);
+insert into students(name, group_id) values('3PPPPPP', 1);
+insert into students(name, group_id) values('5PPPPPP', 2);
+delete students where name=4PPPPPP;
+
+select * from groups;
+
 insert into students(id, name) values(1, 'dwad'); 
 insert into students(id, name) values(2, 'dwqead'); 
 insert into students(id, name) values(2, 'dwad'); 
 insert into students(id, name) values(3, 'dwaqewd'); 
-insert into students(id, name) values(4, 'dwad'); 
+insert into students(id, name) values(4, 'dwad');
 
-
+insert into students(name, group_id) values('PPPPPP', 2);
+delete students where name='PPPPPP';
+ 
+select * from students;
+select * from logging;
 
 
 
@@ -173,9 +188,39 @@ begin
         end if;
     end loop;
 end;
-select *
-from logging;
-begin
-    restore_information(to_timestamp('20.02.2023 14:46:20'));
+
+begin 
+    restore_information(to_timestamp('10-MAR-23 05:04:23'));
     --restore_information(to_timestamp(current_timestamp - 10));
 end;
+
+insert into students(name, group_id) values('PPPPPP', 2);
+delete students where name='PPPPPP';
+select * from logging;
+select * from students;
+
+
+
+/*######################################################################*/
+--Task6
+create or replace procedure upd(in_id number, cnt number) is
+    pragma autonomous_transaction;
+begin
+    update groups set c_val = c_val + cnt where id = in_id;
+    commit;
+end;
+
+create or replace trigger amount_updating
+after delete or insert or update on students
+for each row
+begin
+    if inserting then
+        upd(:new.group_id, 1);
+    elsif deleting then
+        upd(:old.group_id, -1);
+    elsif updating then
+        upd(:new.group_id, 1);
+        upd(:old.group_id, -1);
+    end if;
+end;
+
