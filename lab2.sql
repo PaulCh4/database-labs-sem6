@@ -1,7 +1,4 @@
 --Task1
-create database bsuir_labs;
-use bsuir_labs;
-
 create table STUDENTS(
     id number,
     name varchar2(50),
@@ -17,27 +14,7 @@ create table GROUPS(
 drop table students; 
 drop table groups;
 
-insert into groups(name, c_val) values('A', 0); 
-insert into groups(name, c_val) values('B', 0); 
-insert into students(name, group_id) values('1PPPPPP', 1);
-insert into students(name, group_id) values('2PPPPPP', 2);
-insert into students(name, group_id) values('3PPPPPP', 1);
-insert into students(name, group_id) values('5PPPPPP', 2);
-delete students where name=4PPPPPP;
 
-select * from groups;
-
-insert into students(id, name) values(1, 'dwad'); 
-insert into students(id, name) values(2, 'dwqead'); 
-insert into students(id, name) values(2, 'dwad'); 
-insert into students(id, name) values(3, 'dwaqewd'); 
-insert into students(id, name) values(4, 'dwad');
-
-insert into students(name, group_id) values('PPPPPP', 2);
-delete students where name='PPPPPP';
- 
-select * from students;
-select * from logging;
 
 
 
@@ -58,8 +35,6 @@ begin
     end if;
 end;
 
-
-
 create or replace trigger group_id_unique
 before insert on groups
 for each row
@@ -71,12 +46,16 @@ begin
         raise_application_error(-20101, 'ERROR id must be unique');
     end if;
 end;
-
+--insert into students(id, name, group_id) values(64, 'Paul', 2); 
+--insert into groups(id, name, c_val) values(1,'A', 0); 
+--select * from students;
+--select * from groups;
 
 
 --2) auto-increment
 create sequence student_id
 start with 1;
+--drop sequence student_id
 
 create or replace trigger student_id_generating
 before insert on students
@@ -89,6 +68,7 @@ end;
 
 create sequence group_id
 start with 1;
+--drop sequence group_id
 
 create or replace trigger group_id_generating
 before insert on groups
@@ -96,6 +76,12 @@ for each row
 begin
     :new.id := group_id.nextval;
 end;
+--insert into students(name, group_id) values('dwad', 1); insert into students(name, group_id) values('dwad', 2); 
+--insert into groups(id, name, c_val) values(1,'A', 0); 
+--drop table students;
+--drop table groups;
+--select * from students;
+--select * from groups;
 
 
 
@@ -110,8 +96,10 @@ begin
     if cnt > 0 then
         raise_application_error(-20101, 'ERROR name must be unique');
     end if;
-end;
-
+end; 
+--insert into groups(id, name, c_val) values(1,'A', 0); 
+--select * from students;
+--select * from groups;
 
 
 
@@ -126,6 +114,15 @@ begin
     delete from students where group_id = :old.id;
 end;
 
+--delete groups where id='1';
+
+--insert into students(name, group_id) values('dwad', 1); insert into students(name, group_id) values('dwad', 2); 
+--insert into groups(id, name, c_val) values(1,'A', 0); 
+--drop table students;
+--drop table groups;
+
+--select * from students;
+--select * from groups;
 
 
 
@@ -167,9 +164,18 @@ begin
             values (logging_sequence_id.nextval, cur_action, current_timestamp, :old.id, null, :old.name, :old.group_id);
   end if;
 end;
+--delete groups where name='A';
 
+--insert into students(name, group_id) values('dwad', 1); 
+--insert into students(name, group_id) values('Lary', 2); 
+--delete students where name='Lary';
+--insert into groups(name, c_val) values('A', 2); 
+--drop table students;
+--drop table groups;
 
-
+--select * from students;
+--select * from groups;
+--select * from logging;
 
 
 
@@ -190,17 +196,16 @@ begin
 end;
 
 begin 
-    restore_information(to_timestamp('10-MAR-23 05:04:23'));
-    --restore_information(to_timestamp(current_timestamp - 10));
+    restore_information(to_timestamp('10-MAR-23 09:25:55'));
 end;
 
-insert into students(name, group_id) values('PPPPPP', 2);
-delete students where name='PPPPPP';
-select * from logging;
-select * from students;
+--insert into students(name, group_id) values('PPPPPP', 2);
+--delete students where name='PPPPPP';
+--select * from logging;
+--select * from students;
 
 
-
+  
 /*######################################################################*/
 --Task6
 create or replace procedure upd(in_id number, cnt number) is
@@ -224,3 +229,70 @@ begin
     end if;
 end;
 
+--insert into groups(name, c_val) values('A', 0); 
+--insert into groups(name, c_val) values('B', 0); 
+--insert into students(name, group_id) values('1PPPPPP', 1);
+--insert into students(name, group_id) values('2PPPPPP', 3);
+--insert into students(name, group_id) values('3PPPPPP', 3);
+--insert into students(name, group_id) values('6PPPPPP', 2);
+--delete students where name='2PPPPPP';
+
+--select * from groups;
+--select * from students;
+
+--select * from logging;
+
+
+
+/*########################################################################*/
+drop trigger student_id_unique;
+drop trigger group_id_unique;
+
+drop sequence student_id;
+drop trigger student_id_generating;
+
+drop sequence group_id;
+drop trigger group_id_generating;
+
+drop trigger group_name_unique;
+
+
+drop trigger foreign_key;
+
+
+drop table logging;
+drop sequence logging_sequence_id;
+drop trigger students_logging;
+
+
+drop procedure restore_information;
+
+
+drop procedure upd;
+drop trigger amount_updating;
+/*###############################################################*/
+
+insert into groups(name, c_val) values('A', 0); 
+insert into groups(name, c_val) values('B', 0); 
+insert into groups(id, name, c_val) values('A', 0); 
+insert into groups(id, name, c_val) values('B', 0); 
+insert into students(name, group_id) values('4stud', 1);
+insert into students(name, group_id) values('2PPPPPP', 2);
+insert into students(name, group_id) values('3PPPPPP', 1);
+insert into students(name, group_id) values('6PPPPPP', 2);
+delete students where name='6PPPPPP';
+
+select * from groups;
+
+insert into students(id, name) values(1, 'dwad'); 
+insert into students(id, name) values(62, 'A'); 
+insert into students(id, name) values(2, 'dwad'); 
+insert into students(id, name) values(3, 'dwaqewd'); 
+insert into students(id, name) values(4, 'dwad');
+
+insert into students(name, group_id) values('PPPPPP', 2);
+delete students where name='PPPPPP';
+ 
+select * from students;
+select * from logging;
+--restore_information(to_timestamp(current_timestamp - 10));
