@@ -135,3 +135,100 @@ BEGIN
 END;
 /
 
+CREATE OR REPLACE PROCEDURE get_foreign_keys(owner_name IN VARCHAR2) IS
+BEGIN
+  FOR rec IN (
+    SELECT a.table_name, a.column_name, a.constraint_name, c_pk.table_name r_table_name
+    FROM all_cons_columns a
+    JOIN all_constraints c ON a.owner = c.owner
+                        AND a.constraint_name = c.constraint_name
+    JOIN all_constraints c_pk ON c.r_owner = c_pk.owner
+                           AND c.r_constraint_name = c_pk.constraint_name
+    WHERE c.constraint_type = 'R' AND c.owner = owner_name
+  ) LOOP
+    INSERT INTO foreign_keys_table (
+      table_name,
+      column_name,
+      constraint_name,
+      r_table_name,
+      owner
+    ) VALUES (
+      rec.table_name,
+      rec.column_name,
+      rec.constraint_name,
+      rec.r_table_name,
+      owner_name
+    );
+  END LOOP;
+END;
+/
+
+CREATE OR REPLACE PROCEDURE order_tables (a NUMBER)
+IS
+    CURSOR c_tables IS
+        SELECT table_name, r_table_name
+        FROM foreign_keys_table;
+    table_order SYS_REFCURSOR;
+    table_name VARCHAR2(30);
+BEGIN
+    DELETE FROM order_table WHERE 0 = 0;
+    OPEN table_order FOR
+        WITH ordered_tables AS (
+            SELECT table_name, r_table_name,
+                ROW_NUMBER() OVER (ORDER BY LEVEL) AS "order"
+            FROM foreign_keys_table
+            CONNECT BY NOCYCLE PRIOR r_table_name = table_name
+            START WITH table_name NOT IN (SELECT r_table_name FROM foreign_keys_table)
+        )
+        SELECT table_name FROM ordered_tables ORDER BY "order";
+    LOOP
+        FETCH table_order INTO table_name;
+        EXIT WHEN table_order%NOTFOUND;
+        INSERT INTO order_table (table_name) VALUES (table_name);
+        DBMS_OUTPUT.PUT_LINE(table_name);
+    END LOOP;
+    CLOSE table_order;
+    
+    FOR rec IN (
+        SELECT DISTINCT column_value AS table_name FROM (
+            SELECT table_name AS column_value FROM foreign_keys_table
+            UNION ALL
+            SELECT r_table_name AS column_value FROM foreign_keys_table
+        )
+        WHERE column_value NOT IN (
+            SELECT table_name FROM (
+                SELECT table_name, r_table_name,
+                    ROW_NUMBER() OVER (ORDER BY LEVEL) AS "order"
+                FROM foreign_keys_table
+                CONNECT BY NOCYCLE PRIOR r_table_name = table_name
+                START WITH table_name NOT IN (SELECT r_table_name FROM foreign_keys_table)
+            )
+        )
+    ) LOOP
+        INSERT INTO order_table (rec.table_name) VALUES (rec.table_name);
+        DBMS_OUTPUT.PUT_LINE(rec.table_name);
+    END LOOP;
+END;
+/
+
+DECLARE
+  symbol VARCHAR2(1);
+  col_name VARCHAR2(30);
+  col_type VARCHAR2(30);
+  table_name VARCHAR2(30);
+BEGIN
+    -- compare table 
+    compare_all_tables('C##FULLHAT', 'C##PAN_KROLIC');
+END;
+/
+
+--DROP TABLE foreign_keys_table;
+CREATE TABLE foreign_keys_table (table_name VARCHAR2(30), column_name VARCHAR2(30), constraint_name VARCHAR2(30), r_table_name VARCHAR2(30), owner VARCHAR2(30));
+DELETE foreign_keys_table WHERE 0 = 0;
+
+EXECUTE get_foreign_keys('C##PAN_KROLIC');
+
+CREATE TABLE order_table (table_name VARCHAR2(30));
+EXECUTE order_tables(1);
+
+
