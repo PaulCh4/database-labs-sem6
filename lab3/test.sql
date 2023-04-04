@@ -228,7 +228,23 @@ DELETE foreign_keys_table WHERE 0 = 0;
 
 EXECUTE get_foreign_keys('C##PAN_KROLIC');
 
-CREATE TABLE order_table (table_name VARCHAR2(30));
-EXECUTE order_tables(1);
 
-
+--DECLARE
+--  table_name VARCHAR2(100);
+--  column_name VARCHAR2(100);
+--  ref_table_name VARCHAR2(100);
+--  ref_column_name VARCHAR2(100);
+--BEGIN
+--  FOR c IN (SELECT table_name, column_name, ref_table_name, ref_column_name
+--            FROM all_constraints
+--            WHERE constraint_type = 'R')
+--  LOOP
+--    table_name := c.table_name;
+--    column_name := c.column_name;
+--    ref_table_name := c.ref_table_name;
+--    ref_column_name := c.ref_column_name;
+--    
+--    DBMS_OUTPUT.PUT_LINE('Foreign key ' || column_name || ' in table ' || table_name || ' references ' || ref_column_name || ' in table ' || ref_table_name);
+--  END LOOP;
+--END;
+--/
