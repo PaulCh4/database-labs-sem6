@@ -1,3 +1,19 @@
+--CREATE TABLE temp_table (symbol VARCHAR2(1), col_name VARCHAR2(30), col_type VARCHAR2(30), table_name VARCHAR2(30));
+--DELETE temp_table WHERE 0 = 0;
+--DROP TABLE temp_table;
+--SELECT * FROM temp_table;
+--
+--SELECT * FROM students;
+
+SELECT * FROM temp_table; 
+
+--INSERT INTO foreign_keys_table (table_name, r_table_name) VALUES ('THIRD_TABLE', 'FORTH_TABLE');
+
+--SELECT DISTINCT table_name, r_table_name
+    --FROM foreign_keys_table;
+
+SELECT * FROM order_table;
+
 DECLARE
     CURSOR c_tables IS
         SELECT table_name, r_table_name
