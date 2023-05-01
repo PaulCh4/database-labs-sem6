@@ -1,0 +1,10 @@
+[
+    {
+        "operation": "drop_table",
+        "table": "json_table1"
+    },
+    {
+        "operation": "drop_table",
+        "table": "json_table2"
+    }
+]

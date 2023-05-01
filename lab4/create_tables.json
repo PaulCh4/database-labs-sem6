@@ -1,0 +1,37 @@
+[
+    {
+        "operation": "create_table",
+        "table": "json_table1",
+        "fields": [
+            {
+                "name": "id",
+                "type": "integer not null",
+                "is_pk": true
+            },
+            {
+                "name": "name",
+                "type": "varchar(100) not null"
+            },
+            {
+                "name": "university_id",
+                "type": "integer not null",
+                "foreign_key": "references university(id) on delete cascade"
+            }
+        ]
+    },
+    {
+        "operation": "create_table",
+        "table": "json_table2",
+        "fields": [
+            {
+                "name": "id",
+                "type": "integer not null",
+                "is_pk": true
+            },
+            {
+                "name": "val",
+                "type": "integer not null"
+            }
+        ]
+    }
+]

@@ -1,7 +1,7 @@
 drop function if exists read_file;
-drop function if exists make_delete_query;
+drop function if exists make_update_query;
 drop function if exists make_select_query;
-drop function if exists parse_delete;
+drop function if exists parse_update;
 
 create or replace function read_file(file_path text)
 returns text
@@ -81,7 +81,7 @@ begin
 end;
 $$;
 
-create or replace function make_delete_query(json_data json)
+create or replace function make_update_query(json_data json)
 returns text
 as $$
 declare
@@ -89,6 +89,7 @@ declare
 	fields_str text;
 	
 	table_name text;
+	set_text text;
 	
 	filters json;
 	filter_item json;
@@ -101,8 +102,10 @@ begin
 	fields_str = array_to_string(fields, ', ');
 	
 	table_name = json_data->>'table';
+	set_text = json_data->>'set';
 	
-	query_text := format('delete from %s ', table_name);
+	query_text := format('update %s set %s ', 
+					table_name, set_text);
 
 	filters = json_data->'filters';
 	if filters is not NULL then
@@ -125,25 +128,25 @@ begin
 end;
 $$;
 
-create or replace function parse_delete(file_abs_path text)
+create or replace function parse_update(file_abs_path text)
 returns void
 as $$
 declare
 	json_data text;
-	delete_item json;
+	update_item json;
 	query text;
 begin
 	select read_file(file_abs_path) into json_data;
 	
-	for delete_item in select json_array_elements(json_data::json) loop
-		query = make_delete_query(delete_item);
+	for update_item in select json_array_elements(json_data::json) loop
+		query = make_update_query(update_item);
 		raise notice '%', query;
 		execute query;
 	end loop;
 end;
 $$;
 
-select parse_delete('/media/data/programming/6sem/db/lab4/delete_data.json');
+select parse_update('/media/data/programming/6sem/db/lab4/update_data.json');
 
 
 

@@ -1,0 +1,26 @@
+[
+    {
+        "operation": "insert",
+        "table": "university",
+        "fields": ["name"],
+        "values": ["JSON university 1"]
+    },
+    {
+        "operation": "insert",
+        "table": "university",
+        "fields": ["name"],
+        "values": ["JSON university 2"]
+    },
+    {
+        "operation": "insert",
+        "table": "student_group",
+        "fields": ["name", "university_id"],
+        "values": ["JSON student_group", 3]
+    },
+    {
+        "operation": "insert",
+        "table": "student",
+        "fields": ["name", "group_id"],
+        "values": ["JSON student", 3]
+    }
+]

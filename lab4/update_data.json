@@ -1,0 +1,29 @@
+[
+    {
+        "operation": "update",
+        "table": "university",
+        "set": "name = concat('updated ', name)",
+        "filters": [
+            {
+                "type": "primitive",
+                "condition": "id > 3",
+                "logical_operation": "and"
+            },
+            {
+                "type": "nested",
+                "condition": "name in",
+                "query": {
+                    "operation": "select",
+                    "fields": ["name"],
+                    "table": "university",
+                    "filters": [
+                        {
+                            "type": "primitive",
+                            "condition": "lower(name) like 'json%'"
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+]
